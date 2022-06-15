@@ -1,4 +1,5 @@
 import dataset_converters.ADE20K2COCOConverter
+import dataset_converters.ADE20K20212COCOConverter
 import dataset_converters.CITYSCAPES2COCOConverter
 import dataset_converters.COCO2TDGConverter
 import dataset_converters.COCO2VOCCALIBConverter
@@ -14,6 +15,7 @@ import dataset_converters.COCO2YOLOConverter
 
 converters = [
     dataset_converters.ADE20K2COCOConverter.ADE20K2COCOConverter,
+    dataset_converters.ADE20K20212COCOConverter.ADE20K2COCOConverter,
     dataset_converters.CITYSCAPES2COCOConverter.CITYSCAPES2COCOConverter,
     dataset_converters.COCO2TDGConverter.COCO2TDGConverter,
     dataset_converters.COCO2VOCCALIBConverter.COCO2VOCCALIBConverter,

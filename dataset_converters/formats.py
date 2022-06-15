@@ -6,6 +6,7 @@ formats = [
     'SSD',
     'FRCNN',
     'ADE20K',
+    'ADE20K2021',
     'CITYSCAPES',
     'COCO',
     'VOC',
