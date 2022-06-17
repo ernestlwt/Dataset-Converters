@@ -3,3 +3,4 @@ future
 dicttoxml
 xmltodict
 cityscapesscripts
+pycocotools
