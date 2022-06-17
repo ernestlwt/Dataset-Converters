@@ -83,7 +83,7 @@ class ADE20K2COCOConverter(ConverterBase):
         to_dump = {'images': [], 'type': 'instances', 'annotations': [], 'categories': []}
 
 
-        label_ids = [label['id'] for label in target_labels]
+        label_id_group = [label['id'] for label in target_labels]
         label_names = [label['label'] for label in target_labels]
         
         for new_idx, label_name in enumerate(label_names, 1):
@@ -100,13 +100,17 @@ class ADE20K2COCOConverter(ConverterBase):
             print(i)
             h, w = annotation['annotation']['imsize'][:2]
 
-            object_found = False
+            to_add_image = False
             for obj in annotation['annotation']['object']:
-                if obj['name_ndx'] in label_ids:
-                    category_id = label_ids.index(obj['name_ndx']) + 1
-                    object_found = True
-                else:
-                    continue # skip if object class is not wanted
+                object_found = False
+                for label_id, label_ids in enumerate(label_id_group, 1):
+                    if obj['name_ndx'] in label_ids:
+                        category_id = label_id
+                        object_found = True
+                        to_add_image = True
+                        break
+                if not object_found:
+                    continue# skip if object class is not wanted
 
                 seg_x = obj['polygon']['x']
                 seg_y = obj['polygon']['y']
@@ -134,7 +138,7 @@ class ADE20K2COCOConverter(ConverterBase):
                 instance_counter += 1
 
 
-            if object_found:
+            if to_add_image:
                 to_dump['images'].append(
                     {
                         'file_name': os.path.basename(image),
@@ -153,32 +157,38 @@ class ADE20K2COCOConverter(ConverterBase):
         annotations_folder = os.path.join(output_folder, 'annotations')
 
         REQUIRED_LABELS = [
-                {"id":3055, "label":"window pane"}, # WINDOWPANE
-                {"id":783, "label":"double door"}, # DOUBLE DOOR
-                {"id":1747, "label":"glass pane"}, # GLASS PANE
-                {"id":778, "label":"door frame"}, # DOOR FRAME
-                {"id":2251, "label":"screen door"}, # SCREEN DOOR
-                {"id":2439, "label":"sliding door"}, # SLIDING DOOR
-                {"id":754, "label":"display window"}, # DISPLAY WINDOW, SHOP WINDOW
-                {"id":851, "label":"elevator"}, # ELEVATOR DOOR
-                {"id":1141, "label":"grille door"}, # GRILLE DOOR
-                {"id":995, "label":"folding door"}, # FOLDING DOOR
-                {"id":782, "label":"dormer window"}, # DORMER WINDOW
-                {"id":2765, "label":"ticket window"}, # TICKET WINDOW
-                {"id":852, "label":"elevator doors"}, # ELEVATOR DOORS (SIMILAR TO 851?)
-                {"id":2286, "label":"security door"}, # SECURITY DOOR
-                {"id":3054, "label":"window scarf"}, # WINDOW SCARF (not window but can be used to find windows?)
-                {"id":2358, "label":"shower door"}, # SHOWER DOOR
-                {"id":2164, "label":"rose window"}, # ROSE WINDOW
-                {"id":2287, "label":"security door frame"}, # SECURITY DOOR FRAME
-                {"id":3050, "label":"window"}, # WINDOW
-                {"id":774, "label":"door"}, # DOOR
-                {"id":2346, "label":"shop window"}, #SHOP WINDOW
-                {"id":776, "label":"door frames"}, # DOOR FRAME (SIMILAR TO 778)
-                {"id":3056, "label":"windows"}, # WINDOWS (SIMILAR TO 3050)
-                {"id":1062, "label":"garage door"}, # GARAGE DOOR
-                {"id":2103, "label":"revolving door"}, # REVOLVING DOOR
-                {"id":779, "label":"doors"}, # DOORS (SIMILAR TO 774)
+                {"id":[774, 776, 778, 779, 783, 995, 1141, 2439], "label":"door"}, # DOOR 
+                # {"id":776, "label":"door frames"}, # DOOR FRAME (SIMILAR TO 778)
+                # {"id":778, "label":"door frame"}, # DOOR FRAME
+                # {"id":779, "label":"doors"}, # DOORS (SIMILAR TO 774)
+                # {"id":783, "label":"double door"}, # DOUBLE DOOR
+                # {"id":995, "label":"folding door"}, # FOLDING DOOR (door that folds instead of opening up)
+                # {"id":1141, "label":"grille door"}, # GRILLE DOOR (netted door, prison)
+                # {"id":2439, "label":"sliding door"}, # SLIDING DOOR
+                {"id":[3055, 782], "label":"window"}, # WINDOWPANE (normal window)
+                # {"id":782, "label":"dormer window"}, # DORMER WINDOW (windows on top floor of house)
+
+                # UNUSED DOORS
+
+                # {"id":1062, "label":"garage door"}, # GARAGE DOOR (only closed garage door)
+                # {"id":2103, "label":"revolving door"}, # REVOLVING DOOR (not useful)
+                # {"id":2251, "label":"screen door"}, # SCREEN DOOR (bathroom door)
+                # {"id":2358, "label":"shower door"}, # SHOWER DOOR (bathroom door)
+                # {"id":2286, "label":"security door"}, # SECURITY DOOR (door for bank vault)
+                # {"id":2287, "label":"security door frame"}, # SECURITY DOOR FRAME (frame for bank vault door)
+                # {"id":851, "label":"elevator"}, # ELEVATOR DOOR (not relevant unless taking lift)
+                # {"id":852, "label":"elevator doors"}, # ELEVATOR DOORS (SIMILAR TO 851)
+
+                # UNUSED WINDOWS
+
+                # {"id":754, "label":"display window"}, # DISPLAY WINDOW, SHOP WINDOW (cant open shop front windows)
+                # {"id":2765, "label":"ticket window"}, # TICKET WINDOW (glass pane to buy tickets)
+                # {"id":3054, "label":"window scarf"}, # WINDOW SCARF (window curtain but can use to find window? low qty)
+                # {"id":2164, "label":"rose window"}, # ROSE WINDOW (church circle glass panel)
+                # {"id":2346, "label":"shop window"}, #SHOP WINDOW (not openable)
+                # {"id":3050, "label":"window"}, # WINDOW (too much rubbish, oven window, car window etc.)
+                # {"id":3056, "label":"windows"}, # WINDOWS (this is for a group of windows)
+                # {"id":1747, "label":"glass pane"}, # GLASS PANE (looks like window but cannot open)
             ]
 
         self._ensure_folder_exists_and_is_clear(output_folder)
