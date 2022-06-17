@@ -4,3 +4,4 @@ dicttoxml
 xmltodict
 cityscapesscripts
 pycocotools
+fiftyone
