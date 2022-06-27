@@ -14,7 +14,8 @@ formats = [
     'VOCSEGM',
     'OID',
     'CVAT',
-    'YOLO'
+    'YOLO',
+    'YOLO2021'
 ]
 
 
