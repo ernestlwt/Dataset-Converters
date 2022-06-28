@@ -11,6 +11,7 @@ import dataset_converters.TDG2COCOConverter
 import dataset_converters.TDG2FRCNNConverter
 import dataset_converters.TDG2SSDConverter
 import dataset_converters.YOLO2COCOConverter
+import dataset_converters.YOLO20212COCOConverter
 import dataset_converters.COCO2YOLOConverter
 
 converters = [
@@ -27,5 +28,6 @@ converters = [
     dataset_converters.TDG2FRCNNConverter.TDG2FRCNNConverter,
     dataset_converters.TDG2SSDConverter.TDG2SSDConverter,
     dataset_converters.YOLO2COCOConverter.YOLO2COCOConverter,
+    dataset_converters.YOLO20212COCOConverter.YOLO2COCOConverter,
     dataset_converters.COCO2YOLOConverter.COCO2YOLOConverter,
 ]
